@@ -1,0 +1,6 @@
+= SpaceTrix: The Space Matrix!
+
+== About
+This is a quick WASD game that deals with discovery and exploration in a classic matrix/grid.
+
+== Version Notes
