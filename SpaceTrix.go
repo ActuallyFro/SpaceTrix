@@ -16,8 +16,6 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-
-	"github.com/actuallyfro/SpaceTrix/include"
 )
 
 //include Clock gofile
