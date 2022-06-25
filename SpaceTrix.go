@@ -3,6 +3,7 @@ package main
 import (
 	"log" //stdout Debugging
 	"math"
+	"time"
 
 	"image/color"
 
@@ -16,6 +17,11 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
+
+func updateTime(clock *widget.Label) {
+	formatted := time.Now().Format("Time: 03:04:05")
+	clock.SetText(formatted)
+}
 
 func main() {
 	newFyneApp := app.New()
@@ -60,6 +66,16 @@ func main() {
 			log.Println("Display help")
 		}),
 	)
+
+	clock := widget.NewLabel("")
+	updateTime(clock)
+
+	// w.SetContent(clock)
+	go func() {
+		for range time.Tick(time.Second) {
+			updateTime(clock)
+		}
+	}()
 
 	// grid := container.New(layout.NewGridLayout(8), widget.NewLabel("Content"))
 	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
