@@ -40,14 +40,51 @@ func main() {
 	)
 
 	//https://dev.to/aurelievache/learning-go-by-examples-part-7-create-a-cross-platform-gui-desktop-app-in-go-44j1
-	helpMenu := fyne.NewMenu("Help",
-		fyne.NewMenuItem("About", func() {
-			dialog.ShowCustom("About", "Close", container.NewVBox(
-				widget.NewLabel("SpaceTrix - a WASD Adventure"),
-				widget.NewLabel("Version: v0.0.1"),
-				widget.NewLabel("Author: actuallyfro"),
-			), mainSpaceTrixWindow)
-		}))
+	//https://blogvali.com/menu-items-fyne-gui-golang-tutorial-35/
+
+	helpMenuAbout := fyne.NewMenuItem("About", func() {
+		dialog.ShowCustom("About", "Close", container.NewVBox(
+			widget.NewLabel("SpaceTrix - a WASD Adventure"),
+			widget.NewLabel("Version: v0.0.1"),
+			widget.NewLabel("Author: actuallyfro"),
+		), mainSpaceTrixWindow)
+	})
+
+	clock := widget.NewLabel("")
+	updateTime(clock)
+
+	// w.SetContent(clock)
+	go func() {
+		for range time.Tick(time.Second) {
+			updateTime(clock)
+		}
+	}()
+
+	helpMenuSeeTime := fyne.NewMenuItem("See Time", func() {
+		dialog.ShowCustom("Current Time", "Close", container.NewVBox(
+			clock,
+		), mainSpaceTrixWindow)
+	})
+
+	helpMenu := fyne.NewMenu("Help", helpMenuAbout, helpMenuSeeTime)
+
+	//CoPilot:
+	// helpMenu.Append("License", func() {
+	// 	dialog.ShowCustom("License", "Close", container.NewVBox(
+	// 		widget.NewLabel("SpaceTrix - a WASD Adventure"),
+	// 		widget.NewLabel("Version: v0.0.1"),
+	// 		widget.NewLabel("Author: actuallyfro"),
+	// 	), mainSpaceTrixWindow)
+	// })
+
+	// menuItem1 := fyne.NewMenuItem("New", func() { fmt.Println("New pressed") })
+	// menuItem2 := fyne.NewMenuItem("Save", func() { fmt.Println("Save pressed") })
+	// menuItem3 := fyne.NewMenuItem("edit", nil)
+	// // New Menu
+	// newMenu := fyne.NewMenu("File", menuItem1, menuItem2, menuItem3)
+	// // creating new main menu
+	// menu := fyne.NewMainMenu(newMenu)
+
 	mainMenu := fyne.NewMainMenu(
 		fileMenu,
 		helpMenu,
@@ -67,16 +104,6 @@ func main() {
 			log.Println("Display help")
 		}),
 	)
-
-	clock := widget.NewLabel("")
-	updateTime(clock)
-
-	// w.SetContent(clock)
-	go func() {
-		for range time.Tick(time.Second) {
-			updateTime(clock)
-		}
-	}()
 
 	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
 
