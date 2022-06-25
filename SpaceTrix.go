@@ -71,5 +71,13 @@ func main() {
 	// w.SetContent(widget.NewLabel("Hello World!"))
 	// w.ShowAndRun()
 
+	// Close the App when Escape key is pressed
+	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
+
+		if keyEvent.Name == fyne.KeyEscape {
+			newFyneApp.Quit()
+		}
+	})
+
 	mainSpaceTrixWindow.ShowAndRun()
 }
