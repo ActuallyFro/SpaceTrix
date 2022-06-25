@@ -1,4 +1,4 @@
-package include
+package Clock
 
 import (
 	"time"
@@ -15,7 +15,7 @@ func InitRecurringFunctionUpdateClock(clock *widget.Label) {
 	// w.SetContent(clock)
 	go func() {
 		for range time.Tick(time.Second) {
-			updateTime(clock)
+			UpdateTime(clock)
 		}
 	}()
 }
