@@ -1,4 +1,4 @@
-module actuallyfro/spacetrix
+module github.com/actuallyfro/SpaceTrix
 
 go 1.18
 
