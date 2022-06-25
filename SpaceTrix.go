@@ -25,6 +25,7 @@ func updateTime(clock *widget.Label) {
 
 func main() {
 	newFyneApp := app.New()
+	newFyneApp.Settings().SetTheme(theme.DarkTheme())
 	mainSpaceTrixWindow := newFyneApp.NewWindow("SpaceTrix - a WASD Adventure")
 	mainSpaceTrixWindow.Resize(fyne.NewSize(640, 480))
 
