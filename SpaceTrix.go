@@ -7,6 +7,7 @@ import (
 	"image/color"
 
 	"fyne.io/fyne/v2/canvas" // https://developer.fyne.io/container/grid
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 
 	"fyne.io/fyne/v2" //fyne.*
@@ -25,6 +26,26 @@ func main() {
 	totalBoardObjectsInRow := int(math.Sqrt(float64(totalBoardObjects)))
 
 	centerCell := totalBoardObjects/2 + totalBoardObjectsInRow/2
+
+	// Main menu
+	fileMenu := fyne.NewMenu("File",
+		fyne.NewMenuItem("Quit", func() { newFyneApp.Quit() }),
+	)
+
+	//https://dev.to/aurelievache/learning-go-by-examples-part-7-create-a-cross-platform-gui-desktop-app-in-go-44j1
+	helpMenu := fyne.NewMenu("Help",
+		fyne.NewMenuItem("About", func() {
+			dialog.ShowCustom("About", "Close", container.NewVBox(
+				widget.NewLabel("SpaceTrix - a WASD Adventure"),
+				widget.NewLabel("Version: v0.0.1"),
+				widget.NewLabel("Author: actuallyfro"),
+			), mainSpaceTrixWindow)
+		}))
+	mainMenu := fyne.NewMainMenu(
+		fileMenu,
+		helpMenu,
+	)
+	mainSpaceTrixWindow.SetMainMenu(mainMenu)
 
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
