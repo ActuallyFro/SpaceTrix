@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2/canvas" // https://developer.fyne.io/container/grid
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
+	"github.com/actuallyfro/SpaceTrix/include"
 
 	"fyne.io/fyne/v2" //fyne.*
 	"fyne.io/fyne/v2/app"
@@ -16,7 +17,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/actuallyfro/SpaceTrix/include/Clock"
+	"github.com/actuallyfro/SpaceTrix/include"
 )
 
 //include Clock gofile
@@ -50,9 +51,9 @@ func main() {
 	})
 
 	clock := widget.NewLabel("")
-	Clock.InitRecurringFunctionUpdateClock(clock)
+	include.InitRecurringFunctionUpdateClock(clock)
 
-	Clock.UpdateTime(clock)
+	include.UpdateTime(clock)
 
 	helpMenuSeeTime := fyne.NewMenuItem("See Time", func() {
 		dialog.ShowCustom("Current Time", "Close", container.NewVBox(
