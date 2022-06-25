@@ -3,7 +3,6 @@ package main
 import (
 	"log" //stdout Debugging
 	"math"
-	"time"
 
 	"image/color"
 
@@ -18,12 +17,10 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func updateTime(clock *widget.Label) {
-	formatted := time.Now().Format("Time: 03:04:05")
-	clock.SetText(formatted)
-}
+//include Clock gofile
 
 func main() {
+
 	newFyneApp := app.New()
 	newFyneApp.Settings().SetTheme(theme.DarkTheme())
 	mainSpaceTrixWindow := newFyneApp.NewWindow("SpaceTrix - a WASD Adventure")
@@ -51,14 +48,9 @@ func main() {
 	})
 
 	clock := widget.NewLabel("")
-	updateTime(clock)
+	InitRecurringFunctionUpdateClock(clock)
 
-	// w.SetContent(clock)
-	go func() {
-		for range time.Tick(time.Second) {
-			updateTime(clock)
-		}
-	}()
+	UpdateTime(clock)
 
 	helpMenuSeeTime := fyne.NewMenuItem("See Time", func() {
 		dialog.ShowCustom("Current Time", "Close", container.NewVBox(
