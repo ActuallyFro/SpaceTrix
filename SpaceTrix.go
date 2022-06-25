@@ -77,10 +77,8 @@ func main() {
 		}
 	}()
 
-	// grid := container.New(layout.NewGridLayout(8), widget.NewLabel("Content"))
 	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
 
-	// 1: var textObjects []*canvas.Text
 	for index := 0; index < totalBoardObjects; index++ {
 		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
 		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
@@ -90,14 +88,10 @@ func main() {
 			val = "[x]"
 		}
 
-		// text := canvas.NewText(fmt.Sprint(index), color.White)
 		text := canvas.NewText(val, color.White)
 		text.Alignment = fyne.TextAlignCenter
-		// text.TextStyle = fyne.TextStyle{Italic: true}
 
 		grid.Add(text)
-
-		// grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
 
 	}
 
@@ -105,12 +99,7 @@ func main() {
 
 	mainSpaceTrixWindow.SetContent(ToolbarAndContent)
 
-	// w.SetContent(widget.NewLabel("Hello World!"))
-	// w.ShowAndRun()
-
-	// Close the App when Escape key is pressed
 	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
-
 		if keyEvent.Name == fyne.KeyEscape {
 			newFyneApp.Quit()
 		}
