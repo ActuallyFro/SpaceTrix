@@ -16,11 +16,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-
-	"github.com/actuallyfro/SpaceTrix/include"
 )
-
-//include Clock gofile
 
 func main() {
 
@@ -63,23 +59,6 @@ func main() {
 
 	helpMenu := fyne.NewMenu("Help", helpMenuAbout, helpMenuSeeTime)
 
-	//CoPilot:
-	// helpMenu.Append("License", func() {
-	// 	dialog.ShowCustom("License", "Close", container.NewVBox(
-	// 		widget.NewLabel("SpaceTrix - a WASD Adventure"),
-	// 		widget.NewLabel("Version: v0.0.1"),
-	// 		widget.NewLabel("Author: actuallyfro"),
-	// 	), mainSpaceTrixWindow)
-	// })
-
-	// menuItem1 := fyne.NewMenuItem("New", func() { fmt.Println("New pressed") })
-	// menuItem2 := fyne.NewMenuItem("Save", func() { fmt.Println("Save pressed") })
-	// menuItem3 := fyne.NewMenuItem("edit", nil)
-	// // New Menu
-	// newMenu := fyne.NewMenu("File", menuItem1, menuItem2, menuItem3)
-	// // creating new main menu
-	// menu := fyne.NewMainMenu(newMenu)
-
 	mainMenu := fyne.NewMainMenu(
 		fileMenu,
 		helpMenu,
@@ -102,16 +81,19 @@ func main() {
 
 	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
 
+	var symbolColor color.RGBA
 	for index := 0; index < totalBoardObjects; index++ {
+		symbolColor = color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}
 		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
 		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
 		// val := "[_]" <-- EMPTY CELL
 		val := "[-]"
 		if index == centerCell {
 			val = "[x]"
+			symbolColor = color.RGBA{0x00, 0x00, 0xFF, 0xFF}
 		}
 
-		text := canvas.NewText(val, color.White)
+		text := canvas.NewText(val, symbolColor)
 		text.Alignment = fyne.TextAlignCenter
 
 		grid.Add(text)
