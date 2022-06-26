@@ -202,6 +202,7 @@ func main() {
 			board[currentPos].value = "[X]"
 			board[currentPos].elementColor = color.RGBA{0, 0, 255, 255}
 			// log.Println("[DEBUG] Current Pos: ", currentPos)
+
 			//position as X,Y
 			x := currentPos % totalBoardObjectsInRow
 			y := currentPos / totalBoardObjectsInRow
