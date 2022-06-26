@@ -3,7 +3,6 @@ package main
 import (
 	"log" //stdout Debugging
 	"math"
-	"time"
 
 	"image/color"
 
@@ -50,15 +49,15 @@ func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passed
 
 }
 
-func InitRecurringFunctionUpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
-	// w.SetContent(clock)
-	go func() {
-		//updat every 100ms
-		for range time.Tick(time.Millisecond * 500) {
-			UpdateBoard(passedWindow, passedToolbar, passedContent)
-		}
-	}()
-}
+// func InitRecurringFunctionUpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
+// 	// w.SetContent(clock)
+// 	go func() {
+// 		//updat every 100ms
+// 		for range time.Tick(time.Millisecond * 500) {
+// 			UpdateBoard(passedWindow, passedToolbar, passedContent)
+// 		}
+// 	}()
+// }
 
 func main() {
 
@@ -153,10 +152,11 @@ func main() {
 		)
 
 		grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
+		UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 		// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
 		// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
-		InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+		// InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 		hasBoardBeenInitialized = true
 	}
@@ -209,7 +209,8 @@ func main() {
 			log.Println("[DEBUG] Current Pos: ", x, y)
 
 			board[oldPos].value = "[_]"
-			board[oldPos].elementColor = color.RGBA{255, 255, 255, 255}
+			//decent gray: 158, 158, 158 (or (9E9E9E))
+			board[oldPos].elementColor = color.RGBA{0, 0, 0, 255}
 
 			grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
 			UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
