@@ -29,6 +29,10 @@ type BoardPositions struct {
 	CenterPosition  BoardCoord
 	CurrentPosition BoardCoord
 
+	Rocks   []BoardCoord
+	Enemies []BoardCoord
+	NPCs    []BoardCoord
+
 	CurrentPositionIndex int
 }
 
