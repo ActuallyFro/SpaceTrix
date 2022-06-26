@@ -3,6 +3,7 @@ package main
 import (
 	"log" //stdout Debugging
 	"math"
+	"time"
 
 	"image/color"
 
@@ -21,6 +22,25 @@ import (
 type boardElement struct {
 	value        string
 	elementColor color.RGBA
+}
+
+//    want this ... but for the BOARD rendering
+func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
+	ToolbarAndContent := container.NewBorder(passedToolbar, nil, nil, nil, passedContent)
+	passedWindow.SetContent(ToolbarAndContent)
+
+	// log.Println("[DEBUG] Updating board...")
+
+}
+
+func InitRecurringFunctionUpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
+	// w.SetContent(clock)
+	go func() {
+		//updat every 100ms
+		for range time.Tick(time.Millisecond * 100) {
+			UpdateBoard(passedWindow, passedToolbar, passedContent)
+		}
+	}()
 }
 
 func main() {
@@ -100,25 +120,6 @@ func main() {
 
 	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
 
-	/*
-	   want this ... but for the BOARD rendering
-	   func UpdateBoard(clock *widget.Label) {
-	   	formatted := time.Now().Format("Time: 03:04:05")
-	   	clock.SetText(formatted)
-	   }
-
-	   func InitRecurringFunctionUpdateClock(clock *widget.Label) {
-	   	// w.SetContent(clock)
-	   	go func() {
-	   		for range time.Tick(time.Second) {
-	   			UpdateTime(clock)
-	   		}
-	   	}()
-	   }
-
-
-	*/
-
 	for index := 0; index < totalBoardObjects; index++ {
 		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
 		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
@@ -130,9 +131,9 @@ func main() {
 
 	}
 
-	ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
-
-	mainSpaceTrixWindow.SetContent(ToolbarAndContent)
+	// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
+	// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
+	InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
 		if keyEvent.Name == fyne.KeyEscape {
