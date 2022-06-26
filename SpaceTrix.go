@@ -102,7 +102,7 @@ func main() {
 
 	/*
 	   want this ... but for the BOARD rendering
-	   func UpdateTime(clock *widget.Label) {
+	   func UpdateBoard(clock *widget.Label) {
 	   	formatted := time.Now().Format("Time: 03:04:05")
 	   	clock.SetText(formatted)
 	   }
