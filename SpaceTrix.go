@@ -12,7 +12,9 @@ import (
 
 	"fyne.io/fyne/v2" //fyne.*
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -23,48 +25,38 @@ type currentPositionCoord struct {
 }
 
 type boardElement struct {
-	value        rune
+	value        string
 	elementColor color.RGBA
 }
 
-func CreateTextGrid(passedBoard [][]boardElement) *widget.TextGrid {
+func CreateBoardGrid(passedBoard [][]boardElement) *fyne.Container {
 	// func UpdateGrid(passedBoardTotalObjects int, passedBoardTotalRowObjects int, passedBoard []boardElement) *fyne.Container {
-
-	textgrid := widget.NewTextGrid()
-
-	NewText := ""
+	boardGrid := container.New(layout.NewGridLayout(len(passedBoard)))
 	for i := 0; i < len(passedBoard); i++ {
-		rowstring := ""
+
+		// boardGridCols := container.New(layout.NewGridLayout(len(passedBoard[0])))
 		for j := 0; j < len(passedBoard[0]); j++ {
-			rowstring += string(passedBoard[i][j].value)
+
+			text := canvas.NewText(passedBoard[i][j].value, passedBoard[i][j].elementColor)
+			text.Alignment = fyne.TextAlignCenter
+			// text.TextStyle = fyne.TextStyle{Italic: true}
+
+			// boardGridCols.AddObject(text)
+			boardGrid.AddObject(text)
 		}
-		rowstring += "\n"
-		NewText += rowstring
+		// boardGrid.AddObject(boardGridCols)
 	}
-
-	//This should FILL the grid with the board elements -- NO bounding '[]'
-	textgrid.SetText(NewText)
-
-	// var newCell widget.TextGridCell
-	// // newCell.Rune = '['
-	// // newCell.Style.TextColor().RGBA() = passedBoard[i][j].elementColor
-
-	// newCell.Rune = passedBoard[i][j].value
-	// var tempStyle widget.TextGridCell
-	// tempStyle.Style.
-	// textgrid.SetRowStyle(i, passedBoard[i][j].elementColor)
-	// //newCell.Style.TextColor() = passedBoard[i][j].elementColor
 
 	// 	text := canvas.NewText(passedBoard[index].value, passedBoard[index].elementColor)
 	// 	text.Alignment = fyne.TextAlignCenter
 
-	return textgrid
+	return boardGrid
 }
 
 //    want this ... but for the BOARD rendering
-// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
-// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.Table) {
-func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.TextGrid) {
+func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
+	// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.Table) {
+	// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.TextGrid) {
 	ToolbarAndContent := container.NewBorder(passedToolbar, nil, nil, nil, passedContent)
 	passedWindow.SetContent(ToolbarAndContent)
 
@@ -107,9 +99,9 @@ func main() {
 	hasBoardBeenInitialized := false
 
 	var board [][]boardElement
-	// var grid *fyne.Container
+	var grid *fyne.Container
 	// var table *widget.Table
-	var textgrid *widget.TextGrid
+	// var textgrid *widget.TextGrid
 
 	var helpMenuAbout *fyne.MenuItem
 	var clock *widget.Label
@@ -126,13 +118,13 @@ func main() {
 			board[i] = make([]boardElement, totalBoardObjectsY)
 		}
 
-		for indexX := 0; indexX < totalBoardObjectsX-1; indexX++ {
-			for indexY := 0; indexY < totalBoardObjectsY-1; indexY++ {
+		for indexX := 0; indexX < totalBoardObjectsX; indexX++ {
+			for indexY := 0; indexY < totalBoardObjectsY; indexY++ {
 				if indexX == centerCell.x && indexY == centerCell.y { //Copilot generation
-					board[indexX][indexY].value = 'X'
+					board[indexX][indexY].value = "[X]"
 					board[indexX][indexY].elementColor = color.RGBA{0, 0, 255, 255}
 				} else {
-					board[indexX][indexY].value = '-'
+					board[indexX][indexY].value = "[-]"
 					board[indexX][indexY].elementColor = color.RGBA{255, 255, 255, 255}
 
 				}
@@ -189,9 +181,9 @@ func main() {
 		)
 
 		// grid = CreateTable(totalBoardObjects, totalBoardObjectsInRow, board)
-		textgrid = CreateTextGrid(board)
+		grid = CreateBoardGrid(board)
 		// UpdateBoard(mainSpaceTrixWindow, toolbar, table)
-		UpdateBoard(mainSpaceTrixWindow, toolbar, textgrid)
+		UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 		// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
 		// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
@@ -207,50 +199,50 @@ func main() {
 		if keyEvent.Name == fyne.KeyEscape {
 			newFyneApp.Quit()
 
-		} else if keyEvent.Name == fyne.KeyUp {
-			if currentPosition.y > 0 {
-				currentPosition.y--
+		} else if keyEvent.Name == fyne.KeyUp || keyEvent.Name == fyne.KeyW {
+			if currentPosition.x > 0 {
+				currentPosition.x--
 				posUpdate = true
 			}
 
 			// log.Println("[DEBUG] Up Pressed")
 
-		} else if keyEvent.Name == fyne.KeyDown {
-			if currentPosition.y < totalBoardObjectsY-1 {
-				currentPosition.y++
+		} else if keyEvent.Name == fyne.KeyDown || keyEvent.Name == fyne.KeyS {
+			if currentPosition.x < totalBoardObjectsX-1 {
+				currentPosition.x++
 				posUpdate = true
 			}
 			// log.Println("[DEBUG] Down Pressed")
 
-		} else if keyEvent.Name == fyne.KeyLeft {
-			if currentPosition.x > 0 {
-				currentPosition.x--
+		} else if keyEvent.Name == fyne.KeyLeft || keyEvent.Name == fyne.KeyA {
+			if currentPosition.y > 0 {
+				currentPosition.y--
 				posUpdate = true
 			}
 			// log.Println("[DEBUG] Left Pressed")
 
-		} else if keyEvent.Name == fyne.KeyRight {
-			if currentPosition.x < totalBoardObjectsX-1 {
-				currentPosition.x++
+		} else if keyEvent.Name == fyne.KeyRight || keyEvent.Name == fyne.KeyD {
+			if currentPosition.y < totalBoardObjectsY-1 {
+				currentPosition.y++
 				posUpdate = true
 			}
 			// log.Println("[DEBUG] Right Pressed")
 		}
 
 		if posUpdate {
-			board[currentPosition.x][currentPosition.y].value = 'X'
+			board[currentPosition.x][currentPosition.y].value = "[X]"
 			board[currentPosition.x][currentPosition.y].elementColor = color.RGBA{0, 0, 255, 255}
 
 			log.Println("[DEBUG] Current Pos: ", currentPosition.x, currentPosition.y)
 
-			board[oldPos.x][oldPos.y].value = '_'
+			board[oldPos.x][oldPos.y].value = "[_]"
 			board[oldPos.x][oldPos.y].elementColor = color.RGBA{0, 0, 0, 255}
-			var tempID widget.TableCellID
-			tempID.Col = oldPos.x
-			tempID.Row = oldPos.y
+			// var tempID widget.TableCellID
+			// tempID.Col = oldPos.y
+			// tempID.Row = oldPos.x
 			//The point of the "Table" is to make this Irrelevant:
-			// grid = CreateTable(totalBoardObjects, totalBoardObjectsInRow, board)
-			// UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+			grid = CreateBoardGrid(board)
+			UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 			// OLD
 			// emptyCell := canvas.NewText(string(board[oldPos.x][oldPos.y].value), board[oldPos.x][oldPos.y].elementColor)
