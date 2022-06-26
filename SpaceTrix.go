@@ -12,9 +12,7 @@ import (
 
 	"fyne.io/fyne/v2" //fyne.*
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -23,43 +21,6 @@ type currentPositionCoord struct {
 	x int
 	y int
 }
-
-type boardElement struct {
-	value        string
-	elementColor color.RGBA
-}
-
-func CreateBoardGrid(passedBoard [][]boardElement) *fyne.Container {
-	boardGrid := container.New(layout.NewGridLayout(len(passedBoard[0])))
-
-	for i := 0; i < len(passedBoard); i++ { //Y
-		for j := 0; j < len(passedBoard[0]); j++ { //X
-
-			text := canvas.NewText(passedBoard[i][j].value, passedBoard[i][j].elementColor)
-			text.Alignment = fyne.TextAlignCenter
-
-			boardGrid.AddObject(text)
-		}
-	}
-
-	return boardGrid
-}
-
-func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
-	ToolbarAndContent := container.NewBorder(passedToolbar, nil, nil, nil, passedContent)
-	passedWindow.SetContent(ToolbarAndContent)
-}
-
-//For AI:
-// func InitRecurringFunctionUpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
-// 	// w.SetContent(clock)
-// 	go func() {
-// 		//updat every 100ms
-// 		for range time.Tick(time.Millisecond * 500) {
-// 			UpdateBoard(passedWindow, passedToolbar, passedContent)
-// 		}
-// 	}()
-// }
 
 func main() {
 
@@ -78,7 +39,7 @@ func main() {
 	currentIndexPos := currentPosition.x + currentPosition.y*totalBoardObjectsX
 	hasBoardBeenInitialized := false
 
-	var board [][]boardElement
+	var board [][]include.BoardElement
 	var grid *fyne.Container
 
 	var helpMenuAbout *fyne.MenuItem
@@ -91,19 +52,19 @@ func main() {
 	var toolbar *widget.Toolbar
 
 	if !hasBoardBeenInitialized {
-		board = make([][]boardElement, totalBoardObjectsY)
+		board = make([][]include.BoardElement, totalBoardObjectsY)
 		for i := 0; i < totalBoardObjectsY; i++ {
-			board[i] = make([]boardElement, totalBoardObjectsX)
+			board[i] = make([]include.BoardElement, totalBoardObjectsX)
 		}
 
 		for indexY := 0; indexY < totalBoardObjectsY; indexY++ {
 			for indexX := 0; indexX < totalBoardObjectsX; indexX++ {
 				if indexX == centerCell.x && indexY == centerCell.y { //Copilot generation
-					board[indexY][indexX].value = "[X]"
-					board[indexY][indexX].elementColor = color.RGBA{0, 0, 255, 255}
+					board[indexY][indexX].Value = "[X]"
+					board[indexY][indexX].ElementColor = color.RGBA{0, 0, 255, 255}
 				} else {
-					board[indexY][indexX].value = "[-]"
-					board[indexY][indexX].elementColor = color.RGBA{255, 255, 255, 255}
+					board[indexY][indexX].Value = "[-]"
+					board[indexY][indexX].ElementColor = color.RGBA{255, 255, 255, 255}
 
 				}
 			}
@@ -158,11 +119,13 @@ func main() {
 			}),
 		)
 
-		grid = CreateBoardGrid(board)
-		UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+		grid = include.CreateBoardGrid(board)
+		include.UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 		hasBoardBeenInitialized = true
 	}
+
+	//MOVE TO: 		include.InitBoardInput(&newFyneApp, &mainSpaceTrixWindow) //, ,) IN Input.go
 
 	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
 		posUpdate := false
@@ -206,15 +169,15 @@ func main() {
 		}
 
 		if posUpdate {
-			board[currentPosition.y][currentPosition.x].value = "[X]"
-			board[currentPosition.y][currentPosition.x].elementColor = color.RGBA{0, 0, 255, 255}
+			board[currentPosition.y][currentPosition.x].Value = "[X]"
+			board[currentPosition.y][currentPosition.x].ElementColor = color.RGBA{0, 0, 255, 255}
 
 			log.Println("[DEBUG] Current Pos: ", currentPosition.x, currentPosition.y)
 
-			board[oldPos.y][oldPos.x].value = "[_]"
-			board[oldPos.y][oldPos.x].elementColor = color.RGBA{0, 0, 0, 255}
-			grid = CreateBoardGrid(board)
-			UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+			board[oldPos.y][oldPos.x].Value = "[_]"
+			board[oldPos.y][oldPos.x].ElementColor = color.RGBA{0, 0, 0, 255}
+			grid = include.CreateBoardGrid(board)
+			include.UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 		}
 
