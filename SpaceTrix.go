@@ -2,13 +2,12 @@ package main
 
 import (
 	"log" //stdout Debugging
-	"math"
 
 	"image/color"
 
-	"fyne.io/fyne/v2/canvas" // https://developer.fyne.io/container/grid
+	// https://developer.fyne.io/container/grid
+
 	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/layout"
 	"github.com/actuallyfro/SpaceTrix/include"
 
 	"fyne.io/fyne/v2" //fyne.*
@@ -18,30 +17,46 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+type currentPositionCoord struct {
+	x int
+	y int
+}
+
 type boardElement struct {
 	value        string
 	elementColor color.RGBA
 }
 
-func UpdateGrid(passedBoardTotalObjects int, passedBoardTotalRowObjects int, passedBoard []boardElement) *fyne.Container {
+func CreateTable(passedBoard [][]boardElement) *widget.Table {
+	// func UpdateGrid(passedBoardTotalObjects int, passedBoardTotalRowObjects int, passedBoard []boardElement) *fyne.Container {
 
-	grid := container.New(layout.NewGridLayout(passedBoardTotalRowObjects))
+	// grid := container.New(layout.NewGridLayout(passedBoardTotalRowObjects))
 
-	for index := 0; index < passedBoardTotalObjects; index++ {
-		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
-		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
-		// val := "[_]" <-- EMPTY CELL
-		text := canvas.NewText(passedBoard[index].value, passedBoard[index].elementColor)
-		text.Alignment = fyne.TextAlignCenter
+	//needed callbacks: Length, CreateCell and UpdateCell
+	tableFromBoard := widget.NewTable(
+		func() (int, int) {
+			return len(passedBoard), len(passedBoard[0])
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("Game Board")
+		},
+		func(i widget.TableCellID, o fyne.CanvasObject) {
+			// text := canvas.NewText(passedBoard[i.Row][i.Col].value, passedBoard[i.Row][i.Col].elementColor)
+			// text.Alignment = fyne.TextAlignCenter
+			// o.(*widget.Label).SetText(text.Text)
+			o.(*widget.Label).SetText(passedBoard[i.Row][i.Col].value)
+		})
 
-		grid.Add(text)
+	// 	text := canvas.NewText(passedBoard[index].value, passedBoard[index].elementColor)
+	// 	text.Alignment = fyne.TextAlignCenter
 
-	}
-	return grid
+	// return grid
+	return tableFromBoard
 }
 
 //    want this ... but for the BOARD rendering
-func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
+// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
+func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.Table) {
 	ToolbarAndContent := container.NewBorder(passedToolbar, nil, nil, nil, passedContent)
 	passedWindow.SetContent(ToolbarAndContent)
 
@@ -66,17 +81,26 @@ func main() {
 	mainSpaceTrixWindow := newFyneApp.NewWindow("SpaceTrix - a WASD Adventure")
 	mainSpaceTrixWindow.Resize(fyne.NewSize(640, 480))
 
-	totalBoardObjects := 1024
-	totalBoardObjectsInRow := int(math.Sqrt(float64(totalBoardObjects)))
-	totalBoardObjectsInRowLessOne := totalBoardObjectsInRow - 1
+	totalBoardObjectsX := 32
+	totalBoardObjectsY := 32
+	// totalBoardObjects := totalBoardObjectsX * totalBoardObjectsY
 
-	centerCell := totalBoardObjects/2 + totalBoardObjectsInRow/2
+	// totalBoardObjects := 1024
+	// totalBoardObjectsInRow := int(math.Sqrt(float64(totalBoardObjects)))
+	// totalBoardObjectsInRowLessOne := totalBoardObjectsInRow - 1
 
-	currentPos := centerCell
+	// centerCellIndex := totalBoardObjects/2 + totalBoardObjectsInRow/2
+	//TODO USE? centerCellIndex := totalBoardObjectsX/2 + totalBoardObjectsY/2*totalBoardObjectsX
+	// centerCell := currentPositionCoord{x: centerCellIndex % totalBoardObjectsInRow, y: centerCellIndex/totalBoardObjectsInRow}
+	centerCell := currentPositionCoord{x: totalBoardObjectsX / 2, y: totalBoardObjectsY / 2}
+	currentPosition := centerCell
+
+	// currentPos := centerCell
 	hasBoardBeenInitialized := false
 
-	var board []boardElement
-	var grid *fyne.Container
+	var board [][]boardElement
+	// var grid *fyne.Container
+	var table *widget.Table
 
 	var helpMenuAbout *fyne.MenuItem
 	var clock *widget.Label
@@ -88,18 +112,22 @@ func main() {
 	var toolbar *widget.Toolbar
 
 	if !hasBoardBeenInitialized {
-		//create array boardElement to hold the board, set default as '-'
-		board = make([]boardElement, totalBoardObjects)
-		for i := 0; i < totalBoardObjects; i++ {
-			if i == centerCell {
-				board[i].value = "[X]"
-				board[i].elementColor = color.RGBA{0, 0, 255, 255}
-			} else {
-				board[i].value = "[-]"
-				board[i].elementColor = color.RGBA{255, 255, 255, 255}
+		board = make([][]boardElement, totalBoardObjectsX)
+		for i := 0; i < totalBoardObjectsX; i++ {
+			board[i] = make([]boardElement, totalBoardObjectsY)
+		}
 
+		for indexX := 0; indexX < totalBoardObjectsX-1; indexX++ {
+			for indexY := 0; indexY < totalBoardObjectsY-1; indexY++ {
+				if indexX == centerCell.x && indexY == centerCell.y { //Copilot generation
+					board[indexX][indexY].value = "[X]"
+					board[indexX][indexY].elementColor = color.RGBA{0, 0, 255, 255}
+				} else {
+					board[indexX][indexY].value = "[-]"
+					board[indexX][indexY].elementColor = color.RGBA{255, 255, 255, 255}
+
+				}
 			}
-
 		}
 
 		// Main menu
@@ -151,8 +179,9 @@ func main() {
 			}),
 		)
 
-		grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
-		UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+		// grid = CreateTable(totalBoardObjects, totalBoardObjectsInRow, board)
+		table = CreateTable(board)
+		UpdateBoard(mainSpaceTrixWindow, toolbar, table)
 
 		// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
 		// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
@@ -163,57 +192,53 @@ func main() {
 
 	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
 		posUpdate := false
-		oldPos := currentPos
+		oldPos := currentPosition
 
 		if keyEvent.Name == fyne.KeyEscape {
 			newFyneApp.Quit()
 
 		} else if keyEvent.Name == fyne.KeyUp {
-			if currentPos > totalBoardObjectsInRow {
-				currentPos -= totalBoardObjectsInRow
+			if currentPosition.y > 0 {
+				currentPosition.y--
 				posUpdate = true
 			}
 
 			// log.Println("[DEBUG] Up Pressed")
 
 		} else if keyEvent.Name == fyne.KeyDown {
-			if currentPos < (totalBoardObjects - totalBoardObjectsInRow) {
-				currentPos += totalBoardObjectsInRow
+			if currentPosition.y < totalBoardObjectsY-1 {
+				currentPosition.y++
 				posUpdate = true
 			}
 			// log.Println("[DEBUG] Down Pressed")
 
 		} else if keyEvent.Name == fyne.KeyLeft {
-			if (currentPos % totalBoardObjectsInRow) != 0 {
-				currentPos--
+			if currentPosition.x > 0 {
+				currentPosition.x--
 				posUpdate = true
 			}
 			// log.Println("[DEBUG] Left Pressed")
 
 		} else if keyEvent.Name == fyne.KeyRight {
-			if (currentPos % totalBoardObjectsInRow) != totalBoardObjectsInRowLessOne {
-				currentPos++
+			if currentPosition.x < totalBoardObjectsX-1 {
+				currentPosition.x++
 				posUpdate = true
 			}
 			// log.Println("[DEBUG] Right Pressed")
 		}
 
 		if posUpdate {
-			board[currentPos].value = "[X]"
-			board[currentPos].elementColor = color.RGBA{0, 0, 255, 255}
-			// log.Println("[DEBUG] Current Pos: ", currentPos)
+			board[currentPosition.x][currentPosition.y].value = "[X]"
+			board[currentPosition.x][currentPosition.y].elementColor = color.RGBA{0, 0, 255, 255}
 
-			//position as X,Y
-			x := currentPos % totalBoardObjectsInRow
-			y := currentPos / totalBoardObjectsInRow
-			log.Println("[DEBUG] Current Pos: ", x, y)
+			log.Println("[DEBUG] Current Pos: ", currentPosition.x, currentPosition.y)
 
-			board[oldPos].value = "[_]"
-			//decent gray: 158, 158, 158 (or (9E9E9E))
-			board[oldPos].elementColor = color.RGBA{0, 0, 0, 255}
+			board[oldPos.x][oldPos.y].value = "[_]"
+			board[oldPos.x][oldPos.y].elementColor = color.RGBA{0, 0, 0, 255}
 
-			grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
-			UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+			//The point of the "Table" is to make this Irrelevant:
+			// grid = CreateTable(totalBoardObjects, totalBoardObjectsInRow, board)
+			// UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 		}
 
 	})
