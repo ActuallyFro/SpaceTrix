@@ -30,41 +30,27 @@ type boardElement struct {
 }
 
 func CreateBoardGrid(passedBoard [][]boardElement) *fyne.Container {
-	// func UpdateGrid(passedBoardTotalObjects int, passedBoardTotalRowObjects int, passedBoard []boardElement) *fyne.Container {
 	boardGrid := container.New(layout.NewGridLayout(len(passedBoard[0])))
 
 	for i := 0; i < len(passedBoard); i++ { //Y
-
-		// boardGridCols := container.New(layout.NewGridLayout(len(passedBoard[0])))
 		for j := 0; j < len(passedBoard[0]); j++ { //X
 
 			text := canvas.NewText(passedBoard[i][j].value, passedBoard[i][j].elementColor)
 			text.Alignment = fyne.TextAlignCenter
-			// text.TextStyle = fyne.TextStyle{Italic: true}
 
-			// boardGridCols.AddObject(text)
 			boardGrid.AddObject(text)
 		}
-		// boardGrid.AddObject(boardGridCols)
 	}
-
-	// 	text := canvas.NewText(passedBoard[index].value, passedBoard[index].elementColor)
-	// 	text.Alignment = fyne.TextAlignCenter
 
 	return boardGrid
 }
 
-//    want this ... but for the BOARD rendering
 func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
-	// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.Table) {
-	// func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *widget.TextGrid) {
 	ToolbarAndContent := container.NewBorder(passedToolbar, nil, nil, nil, passedContent)
 	passedWindow.SetContent(ToolbarAndContent)
-
-	// log.Println("[DEBUG] Updating board...")
-
 }
 
+//For AI:
 // func InitRecurringFunctionUpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
 // 	// w.SetContent(clock)
 // 	go func() {
@@ -86,13 +72,6 @@ func main() {
 	totalBoardObjectsY := 21
 	totalBoardObjects := totalBoardObjectsX * totalBoardObjectsY
 
-	// totalBoardObjects := 1024
-	// totalBoardObjectsInRow := int(math.Sqrt(float64(totalBoardObjects)))
-	// totalBoardObjectsInRowLessOne := totalBoardObjectsInRow - 1
-
-	// centerCellIndex := totalBoardObjects/2 + totalBoardObjectsInRow/2
-	//TODO USE? centerCellIndex := totalBoardObjectsX/2 + totalBoardObjectsY/2*totalBoardObjectsX
-	// centerCell := currentPositionCoord{x: centerCellIndex % totalBoardObjectsInRow, y: centerCellIndex/totalBoardObjectsInRow}
 	centerCell := currentPositionCoord{x: totalBoardObjectsX / 2, y: totalBoardObjectsY / 2}
 	currentPosition := centerCell
 
@@ -101,8 +80,6 @@ func main() {
 
 	var board [][]boardElement
 	var grid *fyne.Container
-	// var table *widget.Table
-	// var textgrid *widget.TextGrid
 
 	var helpMenuAbout *fyne.MenuItem
 	var clock *widget.Label
@@ -181,14 +158,8 @@ func main() {
 			}),
 		)
 
-		// grid = CreateTable(totalBoardObjects, totalBoardObjectsInRow, board)
 		grid = CreateBoardGrid(board)
-		// UpdateBoard(mainSpaceTrixWindow, toolbar, table)
 		UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
-
-		// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
-		// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
-		// InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 		hasBoardBeenInitialized = true
 	}
@@ -245,10 +216,6 @@ func main() {
 			grid = CreateBoardGrid(board)
 			UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
-			// OLD
-			// emptyCell := canvas.NewText(string(board[oldPos.y][oldPos.x].value), board[oldPos.y][oldPos.x].elementColor)
-			// emptyCell.Alignment = fyne.TextAlignCenter
-			// table.UpdateCell(tempID, emptyCell)
 		}
 
 	})
