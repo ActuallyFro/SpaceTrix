@@ -18,6 +18,11 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+type boardElement struct {
+	value        string
+	elementColor color.RGBA
+}
+
 func main() {
 
 	newFyneApp := app.New()
@@ -29,6 +34,20 @@ func main() {
 	totalBoardObjectsInRow := int(math.Sqrt(float64(totalBoardObjects)))
 
 	centerCell := totalBoardObjects/2 + totalBoardObjectsInRow/2
+
+	//create array boardElement to hold the board, set default as '-'
+	board := make([]boardElement, totalBoardObjects)
+	for i := 0; i < totalBoardObjects; i++ {
+		if i == centerCell {
+			board[i].value = "[X]"
+			board[i].elementColor = color.RGBA{0, 0, 255, 255}
+		} else {
+			board[i].value = "[-]"
+			board[i].elementColor = color.RGBA{255, 255, 255, 255}
+
+		}
+
+	}
 
 	// Main menu
 	fileMenu := fyne.NewMenu("File",
@@ -81,19 +100,11 @@ func main() {
 
 	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
 
-	var symbolColor color.RGBA
 	for index := 0; index < totalBoardObjects; index++ {
-		symbolColor = color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}
 		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
 		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
 		// val := "[_]" <-- EMPTY CELL
-		val := "[-]"
-		if index == centerCell {
-			val = "[x]"
-			symbolColor = color.RGBA{0x00, 0x00, 0xFF, 0xFF}
-		}
-
-		text := canvas.NewText(val, symbolColor)
+		text := canvas.NewText(board[index].value, board[index].elementColor)
 		text.Alignment = fyne.TextAlignCenter
 
 		grid.Add(text)
