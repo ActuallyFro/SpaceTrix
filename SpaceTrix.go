@@ -7,6 +7,7 @@ import (
 
 	// https://developer.fyne.io/container/grid
 
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/dialog"
 	"github.com/actuallyfro/SpaceTrix/include"
 
@@ -235,10 +236,15 @@ func main() {
 
 			board[oldPos.x][oldPos.y].value = "[_]"
 			board[oldPos.x][oldPos.y].elementColor = color.RGBA{0, 0, 0, 255}
-
+			var tempID widget.TableCellID
+			tempID.Col = oldPos.x
+			tempID.Row = oldPos.y
 			//The point of the "Table" is to make this Irrelevant:
 			// grid = CreateTable(totalBoardObjects, totalBoardObjectsInRow, board)
 			// UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+			emptyCell := canvas.NewText(board[oldPos.x][oldPos.y].value, board[oldPos.x][oldPos.y].elementColor)
+			emptyCell.Alignment = fyne.TextAlignCenter
+			table.UpdateCell(tempID, emptyCell)
 		}
 
 	})
