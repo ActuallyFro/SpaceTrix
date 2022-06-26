@@ -54,7 +54,7 @@ func InitRecurringFunctionUpdateBoard(passedWindow fyne.Window, passedToolbar *w
 	// w.SetContent(clock)
 	go func() {
 		//updat every 100ms
-		for range time.Tick(time.Millisecond * 100) {
+		for range time.Tick(time.Millisecond * 500) {
 			UpdateBoard(passedWindow, passedToolbar, passedContent)
 		}
 	}()
@@ -74,77 +74,92 @@ func main() {
 	centerCell := totalBoardObjects/2 + totalBoardObjectsInRow/2
 
 	currentPos := centerCell
+	hasBoardBeenInitialized := false
 
-	//create array boardElement to hold the board, set default as '-'
-	board := make([]boardElement, totalBoardObjects)
-	for i := 0; i < totalBoardObjects; i++ {
-		if i == centerCell {
-			board[i].value = "[X]"
-			board[i].elementColor = color.RGBA{0, 0, 255, 255}
-		} else {
-			board[i].value = "[-]"
-			board[i].elementColor = color.RGBA{255, 255, 255, 255}
+	var board []boardElement
+	var grid *fyne.Container
+
+	var helpMenuAbout *fyne.MenuItem
+	var clock *widget.Label
+	var helpMenuSeeTime *fyne.MenuItem
+	var helpMenu *fyne.Menu
+	var fileMenu *fyne.Menu
+	var mainMenu *fyne.MainMenu
+
+	var toolbar *widget.Toolbar
+
+	if !hasBoardBeenInitialized {
+		//create array boardElement to hold the board, set default as '-'
+		board = make([]boardElement, totalBoardObjects)
+		for i := 0; i < totalBoardObjects; i++ {
+			if i == centerCell {
+				board[i].value = "[X]"
+				board[i].elementColor = color.RGBA{0, 0, 255, 255}
+			} else {
+				board[i].value = "[-]"
+				board[i].elementColor = color.RGBA{255, 255, 255, 255}
+
+			}
 
 		}
 
+		// Main menu
+		fileMenu = fyne.NewMenu("File",
+			fyne.NewMenuItem("Quit", func() { newFyneApp.Quit() }),
+		)
+
+		//https://dev.to/aurelievache/learning-go-by-examples-part-7-create-a-cross-platform-gui-desktop-app-in-go-44j1
+		//https://blogvali.com/menu-items-fyne-gui-golang-tutorial-35/
+
+		helpMenuAbout = fyne.NewMenuItem("About", func() {
+			dialog.ShowCustom("About", "Close", container.NewVBox(
+				widget.NewLabel("SpaceTrix - a WASD Adventure"),
+				widget.NewLabel("Version: v0.0.1"),
+				widget.NewLabel("Author: actuallyfro"),
+			), mainSpaceTrixWindow)
+		})
+
+		clock = widget.NewLabel("")
+		include.InitRecurringFunctionUpdateClock(clock)
+
+		include.UpdateTime(clock)
+
+		helpMenuSeeTime = fyne.NewMenuItem("See Time", func() {
+			dialog.ShowCustom("Current Time", "Close", container.NewVBox(
+				clock,
+			), mainSpaceTrixWindow)
+		})
+
+		helpMenu = fyne.NewMenu("Help", helpMenuAbout, helpMenuSeeTime)
+
+		mainMenu = fyne.NewMainMenu(
+			fileMenu,
+			helpMenu,
+		)
+		mainSpaceTrixWindow.SetMainMenu(mainMenu)
+
+		toolbar = widget.NewToolbar(
+			widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
+				log.Println("New document")
+			}),
+			widget.NewToolbarSeparator(),
+			widget.NewToolbarAction(theme.ContentCutIcon(), func() {}),
+			widget.NewToolbarAction(theme.ContentCopyIcon(), func() {}),
+			widget.NewToolbarAction(theme.ContentPasteIcon(), func() {}),
+			widget.NewToolbarSpacer(),
+			widget.NewToolbarAction(theme.HelpIcon(), func() {
+				log.Println("Display help")
+			}),
+		)
+
+		grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
+
+		// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
+		// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
+		InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+
+		hasBoardBeenInitialized = true
 	}
-
-	// Main menu
-	fileMenu := fyne.NewMenu("File",
-		fyne.NewMenuItem("Quit", func() { newFyneApp.Quit() }),
-	)
-
-	//https://dev.to/aurelievache/learning-go-by-examples-part-7-create-a-cross-platform-gui-desktop-app-in-go-44j1
-	//https://blogvali.com/menu-items-fyne-gui-golang-tutorial-35/
-
-	helpMenuAbout := fyne.NewMenuItem("About", func() {
-		dialog.ShowCustom("About", "Close", container.NewVBox(
-			widget.NewLabel("SpaceTrix - a WASD Adventure"),
-			widget.NewLabel("Version: v0.0.1"),
-			widget.NewLabel("Author: actuallyfro"),
-		), mainSpaceTrixWindow)
-	})
-
-	clock := widget.NewLabel("")
-	include.InitRecurringFunctionUpdateClock(clock)
-
-	include.UpdateTime(clock)
-
-	helpMenuSeeTime := fyne.NewMenuItem("See Time", func() {
-		dialog.ShowCustom("Current Time", "Close", container.NewVBox(
-			clock,
-		), mainSpaceTrixWindow)
-	})
-
-	helpMenu := fyne.NewMenu("Help", helpMenuAbout, helpMenuSeeTime)
-
-	mainMenu := fyne.NewMainMenu(
-		fileMenu,
-		helpMenu,
-	)
-	mainSpaceTrixWindow.SetMainMenu(mainMenu)
-
-	toolbar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
-			log.Println("New document")
-		}),
-		widget.NewToolbarSeparator(),
-		widget.NewToolbarAction(theme.ContentCutIcon(), func() {}),
-		widget.NewToolbarAction(theme.ContentCopyIcon(), func() {}),
-		widget.NewToolbarAction(theme.ContentPasteIcon(), func() {}),
-		widget.NewToolbarSpacer(),
-		widget.NewToolbarAction(theme.HelpIcon(), func() {
-			log.Println("Display help")
-		}),
-	)
-
-	var grid *fyne.Container
-
-	grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
-
-	// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
-	// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
-	InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
 		posUpdate := false
@@ -186,6 +201,11 @@ func main() {
 		if posUpdate {
 			board[currentPos].value = "[X]"
 			board[currentPos].elementColor = color.RGBA{0, 0, 255, 255}
+			// log.Println("[DEBUG] Current Pos: ", currentPos)
+			//position as X,Y
+			x := currentPos % totalBoardObjectsInRow
+			y := currentPos / totalBoardObjectsInRow
+			log.Println("[DEBUG] Current Pos: ", x, y)
 
 			board[oldPos].value = "[_]"
 			board[oldPos].elementColor = color.RGBA{255, 255, 255, 255}
