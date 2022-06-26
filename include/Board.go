@@ -16,6 +16,43 @@ type BoardElement struct {
 	ElementColor color.RGBA
 }
 
+type BoardCoord struct {
+	x int
+	y int
+}
+
+type BoardPositions struct {
+	TotalX        int
+	TotalY        int
+	TotalElements int
+
+	CenterPosition  BoardCoord
+	CurrentPosition BoardCoord
+
+	CurrentPositionIndex int
+}
+
+func InitBoard(totalX int, totalY int) BoardPositions {
+	var tempBoardPos BoardPositions
+
+	tempBoardPos.TotalX = totalX
+	tempBoardPos.TotalY = totalY
+	tempBoardPos.TotalElements = totalX * totalY
+
+	tempBoardPos.CenterPosition.x = totalX / 2
+	tempBoardPos.CenterPosition.y = totalY / 2
+
+	tempBoardPos.CurrentPosition.x = tempBoardPos.CenterPosition.x
+	tempBoardPos.CurrentPosition.y = tempBoardPos.CenterPosition.y
+
+	tempBoardPos.CurrentPositionIndex = tempBoardPos.CurrentPosition.x + tempBoardPos.CurrentPosition.y*tempBoardPos.TotalX
+
+	return tempBoardPos
+}
+
+// func (x BoardPositions) EXAMPLE-FUNCT() {
+// }
+
 func CreateBoard(totalRows int, totalColumns int) [][]BoardElement {
 	var board [][]BoardElement
 	board = make([][]BoardElement, totalColumns)
