@@ -24,6 +24,23 @@ type boardElement struct {
 	elementColor color.RGBA
 }
 
+func UpdateGrid(passedBoardTotalObjects int, passedBoardTotalRowObjects int, passedBoard []boardElement) *fyne.Container {
+
+	grid := container.New(layout.NewGridLayout(passedBoardTotalRowObjects))
+
+	for index := 0; index < passedBoardTotalObjects; index++ {
+		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
+		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
+		// val := "[_]" <-- EMPTY CELL
+		text := canvas.NewText(passedBoard[index].value, passedBoard[index].elementColor)
+		text.Alignment = fyne.TextAlignCenter
+
+		grid.Add(text)
+
+	}
+	return grid
+}
+
 //    want this ... but for the BOARD rendering
 func UpdateBoard(passedWindow fyne.Window, passedToolbar *widget.Toolbar, passedContent *fyne.Container) {
 	ToolbarAndContent := container.NewBorder(passedToolbar, nil, nil, nil, passedContent)
@@ -52,8 +69,11 @@ func main() {
 
 	totalBoardObjects := 1024
 	totalBoardObjectsInRow := int(math.Sqrt(float64(totalBoardObjects)))
+	totalBoardObjectsInRowLessOne := totalBoardObjectsInRow - 1
 
 	centerCell := totalBoardObjects/2 + totalBoardObjectsInRow/2
+
+	currentPos := centerCell
 
 	//create array boardElement to hold the board, set default as '-'
 	board := make([]boardElement, totalBoardObjects)
@@ -118,27 +138,62 @@ func main() {
 		}),
 	)
 
-	grid := container.New(layout.NewGridLayout(totalBoardObjectsInRow))
+	var grid *fyne.Container
 
-	for index := 0; index < totalBoardObjects; index++ {
-		// 1: textObjects = append(textObjects, canvas.NewText(fmt.Sprint(index), color.White))
-		// 2: grid.Add(canvas.NewText(fmt.Sprint(index), color.White))
-		// val := "[_]" <-- EMPTY CELL
-		text := canvas.NewText(board[index].value, board[index].elementColor)
-		text.Alignment = fyne.TextAlignCenter
-
-		grid.Add(text)
-
-	}
+	grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
 
 	// ToolbarAndContent := container.NewBorder(toolbar, nil, nil, nil, grid)
 	// mainSpaceTrixWindow.SetContent(ToolbarAndContent)
 	InitRecurringFunctionUpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
 	mainSpaceTrixWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
+		posUpdate := false
+		oldPos := currentPos
+
 		if keyEvent.Name == fyne.KeyEscape {
 			newFyneApp.Quit()
+
+		} else if keyEvent.Name == fyne.KeyUp {
+			if currentPos > totalBoardObjectsInRow {
+				currentPos -= totalBoardObjectsInRow
+				posUpdate = true
+			}
+
+			// log.Println("[DEBUG] Up Pressed")
+
+		} else if keyEvent.Name == fyne.KeyDown {
+			if currentPos < (totalBoardObjects - totalBoardObjectsInRow) {
+				currentPos += totalBoardObjectsInRow
+				posUpdate = true
+			}
+			// log.Println("[DEBUG] Down Pressed")
+
+		} else if keyEvent.Name == fyne.KeyLeft {
+			if (currentPos % totalBoardObjectsInRow) != 0 {
+				currentPos--
+				posUpdate = true
+			}
+			// log.Println("[DEBUG] Left Pressed")
+
+		} else if keyEvent.Name == fyne.KeyRight {
+			if (currentPos % totalBoardObjectsInRow) != totalBoardObjectsInRowLessOne {
+				currentPos++
+				posUpdate = true
+			}
+			// log.Println("[DEBUG] Right Pressed")
 		}
+
+		if posUpdate {
+			board[currentPos].value = "[X]"
+			board[currentPos].elementColor = color.RGBA{0, 0, 255, 255}
+
+			board[oldPos].value = "[_]"
+			board[oldPos].elementColor = color.RGBA{255, 255, 255, 255}
+
+			grid = UpdateGrid(totalBoardObjects, totalBoardObjectsInRow, board)
+			UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
+		}
+
 	})
 
 	mainSpaceTrixWindow.ShowAndRun()
