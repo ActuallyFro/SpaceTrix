@@ -16,6 +16,28 @@ type BoardElement struct {
 	ElementColor color.RGBA
 }
 
+func CreateBoard(totalRows int, totalColumns int) [][]BoardElement {
+	var board [][]BoardElement
+	board = make([][]BoardElement, totalColumns)
+	for i := 0; i < totalColumns; i++ {
+		board[i] = make([]BoardElement, totalRows)
+	}
+
+	for indexY := 0; indexY < totalColumns; indexY++ {
+		for indexX := 0; indexX < totalRows; indexX++ {
+			if indexX == totalRows/2 && indexY == totalColumns/2 { //Copilot generation
+				board[indexY][indexX].Value = "[X]"
+				board[indexY][indexX].ElementColor = color.RGBA{0, 0, 255, 255}
+			} else {
+				board[indexY][indexX].Value = "[-]"
+				board[indexY][indexX].ElementColor = color.RGBA{255, 255, 255, 255}
+
+			}
+		}
+	}
+	return board
+}
+
 func CreateBoardGrid(passedBoard [][]BoardElement) *fyne.Container {
 	boardGrid := container.New(layout.NewGridLayout(len(passedBoard[0])))
 

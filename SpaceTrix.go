@@ -52,23 +52,7 @@ func main() {
 	var toolbar *widget.Toolbar
 
 	if !hasBoardBeenInitialized {
-		board = make([][]include.BoardElement, totalBoardObjectsY)
-		for i := 0; i < totalBoardObjectsY; i++ {
-			board[i] = make([]include.BoardElement, totalBoardObjectsX)
-		}
-
-		for indexY := 0; indexY < totalBoardObjectsY; indexY++ {
-			for indexX := 0; indexX < totalBoardObjectsX; indexX++ {
-				if indexX == centerCell.x && indexY == centerCell.y { //Copilot generation
-					board[indexY][indexX].Value = "[X]"
-					board[indexY][indexX].ElementColor = color.RGBA{0, 0, 255, 255}
-				} else {
-					board[indexY][indexX].Value = "[-]"
-					board[indexY][indexX].ElementColor = color.RGBA{255, 255, 255, 255}
-
-				}
-			}
-		}
+		board = include.CreateBoard(totalBoardObjectsX, totalBoardObjectsY)
 
 		// Main menu
 		fileMenu = fyne.NewMenu("File",
