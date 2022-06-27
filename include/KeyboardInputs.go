@@ -59,13 +59,37 @@ func InitBoardInput(passedApp *fyne.App, passedWindow *fyne.Window, passedToolba
 		}
 
 		if posUpdate {
-			board[BoardInfo.CurrentPosition.y][BoardInfo.CurrentPosition.x].Value = "[X]"
-			board[BoardInfo.CurrentPosition.y][BoardInfo.CurrentPosition.x].ElementColor = color.RGBA{0, 0, 255, 255}
+			disableUpdate := false
 
+			currentPositionsValue := board[BoardInfo.CurrentPosition.y][BoardInfo.CurrentPosition.x].Value
+			oldPositionValue := board[oldPos.y][oldPos.x].Value
+			//check new position for rocks, enemies, NPCs
+
+			if currentPositionsValue == "[R]" {
+				log.Println("[DEBUG] Rock Found")
+				// BoardInfo.CurrentPosition = oldPos
+			} else if currentPositionsValue == "[E]" {
+				log.Println("[DEBUG] Enemy Found")
+				// BoardInfo.CurrentPosition = oldPos
+				disableUpdate = true
+			} else if currentPositionsValue == "[N]" {
+				log.Println("[DEBUG] NPC Found")
+				// BoardInfo.CurrentPosition = oldPos
+				disableUpdate = true
+			} else { //Assumes Empty
+				// log.Println("[DEBUG] No Obstacle Found")
+				//update board
+			}
+
+			if !disableUpdate {
+				board[BoardInfo.CurrentPosition.y][BoardInfo.CurrentPosition.x].Value = "[X]"
+				board[BoardInfo.CurrentPosition.y][BoardInfo.CurrentPosition.x].ElementColor = color.RGBA{0, 0, 255, 255}
+			}
 			log.Println("[DEBUG] Current Pos: ", BoardInfo.CurrentPosition.x, BoardInfo.CurrentPosition.y)
-
-			board[oldPos.y][oldPos.x].Value = "[_]"
-			board[oldPos.y][oldPos.x].ElementColor = color.RGBA{0, 0, 0, 255}
+			if oldPositionValue == "[X]" {
+				board[oldPos.y][oldPos.x].Value = "[_]"
+				board[oldPos.y][oldPos.x].ElementColor = color.RGBA{0, 0, 0, 255}
+			}
 			grid := CreateBoardGrid(board)
 			UpdateBoard(mainSpaceTrixWindow, passedToolbar, grid)
 
