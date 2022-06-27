@@ -66,7 +66,7 @@ func InitBoard(totalX int, totalY int) BoardPositions {
 	tempBoardPos.StartingEnemies = tempBoardPos.TotalElements / 20 //always 5%
 	// fmt.Println("[DEBUG][InitBoard] Enemies: ", tempBoardPos.StartingEnemies)
 
-	tempBoardPos.StartingNPCs = 0 //tempBoardPos.TotalElements / 100 //-- want it as a 1 in 50 chance!
+	tempBoardPos.StartingNPCs = 1 //-- want it as a 1 in 50 chance!
 
 	// tempBoardPos.StartingElementsSet = false
 	tempBoardPos.Rocks = tempBoardPos.SetupStartingElements(tempBoardPos.StartingRocks)
