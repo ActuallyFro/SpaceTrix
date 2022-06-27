@@ -22,7 +22,7 @@ func main() {
 	BoardInfo := include.InitBoard(13, 21)
 
 	var board [][]include.BoardElement
-	board = include.CreateBoard(BoardInfo.TotalX, BoardInfo.TotalY)
+	board = include.CreateBoard(BoardInfo)
 
 	include.CreateMenus(&newFyneApp, &mainSpaceTrixWindow)
 
