@@ -40,8 +40,9 @@ func main() {
 	// rand.Seed("SpaceTrix")
 	BoardInfo := include.InitBoard(13, 21)
 
-	var board [][]include.BoardElement
-	board = include.CreateBoard(BoardInfo)
+	// var board [][]include.BoardElement
+	// board = include.CreateBoard(BoardInfo)
+	board := include.CreateBoard(BoardInfo)
 
 	include.CreateMenus(&newFyneApp, &mainSpaceTrixWindow)
 
