@@ -44,6 +44,12 @@ func UUIDInt64Lower(passedUUID uuid.UUID) int64 {
 	return int64(binary.BigEndian.Uint64(passedUUID[0:8]))
 }
 
+//Hex print of UUID upper/lower
+// fmt.Printf("%x %x\n", u1, u2)
+
+// u2 := UUIDInt64Upper(newUUID)
+// fmt.Println("[DEBUG] [UUID] split: ", u1, u2)
+
 func UUIDInt64Upper(passedUUID uuid.UUID) int64 {
 	return int64(binary.BigEndian.Uint64(passedUUID[8:16]))
 }
@@ -64,17 +70,9 @@ func main() {
 	newUUID := RandUUID()
 
 	u1 := UUIDInt64Lower(newUUID)
-	// u2 := UUIDInt64Upper(newUUID)
 
-	//Hex print of UUID upper/lower
-	// fmt.Printf("%x %x\n", u1, u2)
-
-	// u2 := UUIDInt64Upper(newUUID)
-	// fmt.Println("[DEBUG] [UUID] split: ", u1, u2)
-
-	//log int
-	fmt.Println("[DEBUG] [main] seedInt:", newUUID)
-	fmt.Println("[DEBUG] [main] generating seed with:", u1)
+	fmt.Println("[DEBUG] [main] seedUUID:", newUUID)
+	fmt.Println("[DEBUG] [main] seeding lower int64 of:", u1)
 
 	rand.Seed(u1)
 	BoardInfo := include.InitBoard(13, 21)
