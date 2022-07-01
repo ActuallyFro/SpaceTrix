@@ -18,6 +18,10 @@ import (
 	"fyne.io/fyne/v2/app"
 )
 
+func InitRandSeedTime() {
+	rand.Seed(time.Now().UnixNano()) //Random start, to then create a re-usable seed
+}
+
 func RandUUID() uuid.UUID {
 	return uuid.New()
 }
@@ -50,9 +54,10 @@ func main() {
 	mainSpaceTrixWindow := newFyneApp.NewWindow("SpaceTrix - a WASD Adventure")
 	mainSpaceTrixWindow.Resize(fyne.NewSize(640, 480))
 
+	InitRandSeedTime()
+
 	// seed := "SpaceTrix" //returns 915
 	// seed := "SpaceTrix++"
-	rand.Seed(time.Now().UnixNano()) //Random start, to then create a re-usable seed
 
 	// seed := "d5acc140-55dc-4e86-8a40-bd7931df3f92" //generates 2470
 
