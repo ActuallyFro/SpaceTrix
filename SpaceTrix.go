@@ -12,7 +12,6 @@ import (
 
 	"fyne.io/fyne/v2" //fyne.*
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/theme"
 )
 
 func ConvertStringToL33tInt(s string) int64 {
@@ -29,7 +28,7 @@ func ConvertStringToL33tInt(s string) int64 {
 func main() {
 
 	newFyneApp := app.New()
-	newFyneApp.Settings().SetTheme(theme.DarkTheme())
+	// newFyneApp.Settings().SetTheme(theme.DarkTheme()) //A ppARENTly ... func is deprecated... -_-
 	mainSpaceTrixWindow := newFyneApp.NewWindow("SpaceTrix - a WASD Adventure")
 	mainSpaceTrixWindow.Resize(fyne.NewSize(640, 480))
 
