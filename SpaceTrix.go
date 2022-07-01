@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"math/rand"
+
 	//stdout Debugging
 
 	// https://developer.fyne.io/container/grid
@@ -12,6 +15,17 @@ import (
 	"fyne.io/fyne/v2/theme"
 )
 
+func ConvertStringToL33tInt(s string) int64 {
+	var i int64
+	for _, c := range s {
+		i += int64(c)
+	}
+	//print int
+	fmt.Println("[DEBUG] [Str2L33tInt] generated:", i)
+
+	return i
+}
+
 func main() {
 
 	newFyneApp := app.New()
@@ -19,6 +33,12 @@ func main() {
 	mainSpaceTrixWindow := newFyneApp.NewWindow("SpaceTrix - a WASD Adventure")
 	mainSpaceTrixWindow.Resize(fyne.NewSize(640, 480))
 
+	// seed := "SpaceTrix"
+	seed := "SpaceTrix++"
+	rand.Seed(ConvertStringToL33tInt(seed))
+	//convert string "seed" to int64
+
+	// rand.Seed("SpaceTrix")
 	BoardInfo := include.InitBoard(13, 21)
 
 	var board [][]include.BoardElement
