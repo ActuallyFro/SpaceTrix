@@ -2,7 +2,10 @@ module github.com/actuallyfro/SpaceTrix
 
 go 1.18
 
-require fyne.io/fyne/v2 v2.2.1
+require (
+	fyne.io/fyne/v2 v2.2.1
+	github.com/google/uuid v1.1.2
+)
 
 require (
 	fyne.io/systray v1.10.0 // indirect
