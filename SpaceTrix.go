@@ -22,10 +22,10 @@ func main() {
 
 	include.InitRandSeedTime()
 
-	u1 := include.UUIDInt64Lower(include.RandUUID())
-	fmt.Println("[DEBUG] [main] seeding lower int64 of:", u1)
+	BoardSeedStarting := include.UUIDInt64Lower(include.RandUUID())
+	fmt.Println("[DEBUG] Starting Seed: ", BoardSeedStarting)
 
-	rand.Seed(u1)
+	rand.Seed(BoardSeedStarting)
 	BoardInfo := include.InitBoard(13, 21)
 
 	board := include.CreateBoard(BoardInfo)
