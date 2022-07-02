@@ -22,16 +22,7 @@ func main() {
 
 	include.InitRandSeedTime()
 
-	// seed := "SpaceTrix" //returns 915
-	// seed := "SpaceTrix++"
-
-	// seed := "d5acc140-55dc-4e86-8a40-bd7931df3f92" //generates 2470
-
-	newUUID := include.RandUUID()
-
-	u1 := include.UUIDInt64Lower(newUUID)
-
-	fmt.Println("[DEBUG] [main] seedUUID:", newUUID)
+	u1 := include.UUIDInt64Lower(include.RandUUID())
 	fmt.Println("[DEBUG] [main] seeding lower int64 of:", u1)
 
 	rand.Seed(u1)
