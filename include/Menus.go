@@ -58,7 +58,32 @@ func CreateMenus(passedApp *fyne.App, passedWindow *fyne.Window) {
 	mainSpaceTrixWindow.SetMainMenu(mainMenu)
 }
 
-func InitToolbar() *widget.Toolbar {
+/////
+//https://github.com/fyne-io/fyne/issues/2257
+
+type toolbarLabel struct {
+	*widget.Label
+}
+
+func NewToolbarLabel(label string) widget.ToolbarItem {
+	l := widget.NewLabelWithStyle(label, fyne.TextAlignCenter, fyne.TextStyle{Bold: true})
+	l.MinSize()
+	return &toolbarLabel{l}
+}
+
+func (t *toolbarLabel) ToolbarObject() fyne.CanvasObject {
+	return t.Label
+}
+
+/////
+
+func InitToolbar(BoardCellInformation widget.ToolbarItem) *widget.Toolbar {
+	// tempText := canvas.NewText("<empty>", color.RGBA64{0, 0, 0, 0})
+	// tempText.Alignment = fyne.TextAlignCenter
+
+	// var BoardInfo widget.ToolbarItem
+	// BoardInfo.ToolbarObject() = tempText
+
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
 			log.Println("New document")
@@ -67,11 +92,21 @@ func InitToolbar() *widget.Toolbar {
 		widget.NewToolbarAction(theme.ContentCutIcon(), func() {}),
 		widget.NewToolbarAction(theme.ContentCopyIcon(), func() {}),
 		widget.NewToolbarAction(theme.ContentPasteIcon(), func() {}),
+
+		widget.NewToolbarSeparator(),
+		//Print current board item/filler info here
+		BoardCellInformation,
+		widget.NewToolbarSeparator(),
+
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.HelpIcon(), func() {
 			log.Println("Display help")
 		}),
 	)
 
+	// text := canvas.NewText(passedBoard[i][j].Value, passedBoard[i][j].ElementColor)
+	// text.Alignment = fyne.TextAlignCenter
+
+	// boardGrid.AddObject(text)
 	return toolbar
 }

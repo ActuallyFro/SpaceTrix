@@ -32,7 +32,9 @@ func main() {
 
 	include.CreateMenus(&newFyneApp, &mainSpaceTrixWindow)
 
-	toolbar := include.InitToolbar()
+	BoardCellInfoLabel := include.NewToolbarLabel("<empty>")
+	toolbar := include.InitToolbar(BoardCellInfoLabel)
+
 	grid := include.CreateBoardGrid(board)
 	include.UpdateBoard(mainSpaceTrixWindow, toolbar, grid)
 
